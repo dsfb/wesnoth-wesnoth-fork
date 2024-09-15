@@ -751,14 +751,20 @@ std::string game_launcher::jump_to_campaign_id() const
 	return jump_to_campaign_.campaign_id;
 }
 
+bool game_launcher::play_campaign() {
+	if(new_campaign()) {
+		state_.set_skip_story(jump_to_campaign_.skip_story);
+		jump_to_campaign_.jump = false;
+		launch_game(reload_mode::NO_RELOAD_DATA);
+		return true;
+	}
+	return false;
+}
+
 bool game_launcher::goto_campaign()
 {
 	if(jump_to_campaign_.jump) {
-		if(new_campaign()) {
-			state_.set_skip_story(jump_to_campaign_.skip_story);
-			jump_to_campaign_.jump = false;
-			launch_game(reload_mode::NO_RELOAD_DATA);
-		} else {
+		if(!play_campaign()) {
 			jump_to_campaign_.jump = false;
 			return false;
 		}
